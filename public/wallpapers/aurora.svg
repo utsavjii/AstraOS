@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <radialGradient id="a" cx="22%" cy="15%" r="82%">
+      <stop offset="0" stop-color="#3ff7ff" stop-opacity=".8"/>
+      <stop offset=".46" stop-color="#7c3aed" stop-opacity=".4"/>
+      <stop offset="1" stop-color="#06111e"/>
+    </radialGradient>
+    <linearGradient id="b" x1="0" x2="1">
+      <stop offset="0" stop-color="#08111f"/>
+      <stop offset=".48" stop-color="#14163a"/>
+      <stop offset="1" stop-color="#091a22"/>
+    </linearGradient>
+    <filter id="soft"><feGaussianBlur stdDeviation="42"/></filter>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#b)"/>
+  <path d="M-80 620C230 300 510 402 770 274c238-117 412-274 728-168 202 68 374 242 512 518v456H-80Z" fill="url(#a)" filter="url(#soft)" opacity=".76"/>
+  <path d="M0 870c302-180 566-168 792-64 278 128 492 98 754-58 138-82 258-104 374-74v406H0Z" fill="#07111f" opacity=".76"/>
+  <g fill="#fff" opacity=".55">
+    <circle cx="240" cy="172" r="2"/><circle cx="488" cy="264" r="1.8"/><circle cx="1280" cy="170" r="2.2"/><circle cx="1580" cy="332" r="1.6"/><circle cx="1720" cy="132" r="2.4"/>
+  </g>
+</svg>

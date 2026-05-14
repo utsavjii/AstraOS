@@ -1,0 +1,6 @@
+import type { InputHTMLAttributes } from "react";
+import { cn } from "../../lib/cn";
+
+export function Slider({ className, ...props }: InputHTMLAttributes<HTMLInputElement>) {
+  return <input type="range" className={cn("astra-slider", className)} {...props} />;
+}

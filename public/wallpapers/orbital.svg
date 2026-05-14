@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <radialGradient id="planet" cx="40%" cy="40%" r="62%">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset=".24" stop-color="#a7f3ff"/>
+      <stop offset=".68" stop-color="#4f46e5"/>
+      <stop offset="1" stop-color="#090d1a"/>
+    </radialGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="18"/></filter>
+  </defs>
+  <rect width="1920" height="1080" fill="#090d1a"/>
+  <circle cx="1320" cy="430" r="270" fill="url(#planet)"/>
+  <ellipse cx="1320" cy="430" rx="560" ry="110" fill="none" stroke="#7df3ff" stroke-width="7" opacity=".38" transform="rotate(-15 1320 430)"/>
+  <ellipse cx="1320" cy="430" rx="620" ry="128" fill="none" stroke="#ff4fd8" stroke-width="5" opacity=".18" transform="rotate(-15 1320 430)" filter="url(#glow)"/>
+  <path d="M0 720c338-68 622-42 852 78 250 132 614 120 1068-36v318H0Z" fill="#06111e" opacity=".78"/>
+</svg>

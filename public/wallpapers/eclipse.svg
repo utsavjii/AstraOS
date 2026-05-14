@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <radialGradient id="core" cx="52%" cy="46%" r="36%">
+      <stop offset="0" stop-color="#0b1020"/>
+      <stop offset=".58" stop-color="#111827"/>
+      <stop offset=".62" stop-color="#7df3ff"/>
+      <stop offset=".72" stop-color="#ff4fd8"/>
+      <stop offset="1" stop-color="#050914"/>
+    </radialGradient>
+    <filter id="blur"><feGaussianBlur stdDeviation="30"/></filter>
+  </defs>
+  <rect width="1920" height="1080" fill="#050914"/>
+  <circle cx="990" cy="480" r="380" fill="url(#core)"/>
+  <ellipse cx="950" cy="830" rx="660" ry="95" fill="#5eeaff" opacity=".18" filter="url(#blur)"/>
+  <path d="M0 0h1920v1080H0z" fill="none" stroke="#7df3ff" stroke-opacity=".08" stroke-width="2"/>
+</svg>
