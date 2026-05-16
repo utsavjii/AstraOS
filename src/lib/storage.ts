@@ -1,9 +1,17 @@
 import { initialFileSystem } from "../data/files";
 import { initialEvents, initialNotes, initialNotifications } from "../data/mockContent";
 import { wallpapers } from "../data/wallpapers";
-import type { OSSettings, OSState } from "../types/os";
+import type { OSSettings, OSState, PerformanceMode } from "../types/os";
 
 export const STORAGE_KEY = "astraos.v1";
+
+export function getDefaultPerformanceMode(): PerformanceMode {
+  if (typeof navigator === "undefined") return "high";
+  const cores = navigator.hardwareConcurrency ?? 8;
+  const memory =
+    "deviceMemory" in navigator ? Number((navigator as Navigator & { deviceMemory?: number }).deviceMemory) : 8;
+  return cores <= 4 || memory <= 4 ? "balanced" : "high";
+}
 
 export const defaultSettings: OSSettings = {
   theme: "dark",
@@ -14,6 +22,7 @@ export const defaultSettings: OSSettings = {
   startupSound: true,
   cursorEffects: true,
   reducedMotion: false,
+  performanceMode: getDefaultPerformanceMode(),
   multiMonitor: false,
   widgets: {
     weather: true,

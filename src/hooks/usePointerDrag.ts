@@ -8,6 +8,19 @@ interface DragOptions {
 
 export function usePointerDrag({ onStart, onMove, onEnd }: DragOptions) {
   const lastPoint = useRef({ x: 0, y: 0 });
+  const frame = useRef<number | null>(null);
+  const queuedDelta = useRef({ x: 0, y: 0 });
+  const queuedEvent = useRef<PointerEvent | null>(null);
+
+  const flushMove = useCallback(() => {
+    frame.current = null;
+    const event = queuedEvent.current;
+    if (!event) return;
+    const delta = queuedDelta.current;
+    queuedDelta.current = { x: 0, y: 0 };
+    queuedEvent.current = null;
+    onMove(delta, event);
+  }, [onMove]);
 
   return useCallback(
     (event: ReactPointerEvent) => {
@@ -23,18 +36,29 @@ export function usePointerDrag({ onStart, onMove, onEnd }: DragOptions) {
           y: moveEvent.clientY - lastPoint.current.y,
         };
         lastPoint.current = { x: moveEvent.clientX, y: moveEvent.clientY };
-        onMove(delta, moveEvent);
+        queuedDelta.current = {
+          x: queuedDelta.current.x + delta.x,
+          y: queuedDelta.current.y + delta.y,
+        };
+        queuedEvent.current = moveEvent;
+        if (frame.current === null) {
+          frame.current = requestAnimationFrame(flushMove);
+        }
       };
 
       const handleUp = (upEvent: PointerEvent) => {
         window.removeEventListener("pointermove", handleMove);
         window.removeEventListener("pointerup", handleUp);
+        if (frame.current !== null) {
+          cancelAnimationFrame(frame.current);
+          flushMove();
+        }
         onEnd?.(upEvent);
       };
 
       window.addEventListener("pointermove", handleMove);
       window.addEventListener("pointerup", handleUp);
     },
-    [onEnd, onMove, onStart],
+    [flushMove, onEnd, onStart],
   );
 }

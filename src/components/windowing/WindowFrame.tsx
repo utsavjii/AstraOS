@@ -1,27 +1,46 @@
-import { lazy, Suspense, useMemo, useRef, useState } from "react";
+import {
+  lazy,
+  memo,
+  Suspense,
+  useCallback,
+  useRef,
+  useState,
+  type ComponentType,
+  type LazyExoticComponent,
+} from "react";
 import { motion } from "framer-motion";
 import { getApp } from "../../data/apps";
 import { usePointerDrag } from "../../hooks/usePointerDrag";
 import { cn } from "../../lib/cn";
 import { useOS } from "../../state/OSProvider";
-import type { SnapState, WindowState } from "../../types/os";
+import type { AppComponentProps, AppDefinition, SnapState, WindowState } from "../../types/os";
 import { SystemIcon } from "../ui/SystemIcon";
 import { SnapOverlay } from "./SnapOverlay";
 
-export function WindowFrame({ windowState }: { windowState: WindowState }) {
+const appComponentCache = new Map<string, LazyExoticComponent<ComponentType<AppComponentProps>>>();
+
+function getAppComponent(app: AppDefinition) {
+  const cached = appComponentCache.get(app.id);
+  if (cached) return cached;
+  const component = lazy(app.loader);
+  appComponentCache.set(app.id, component);
+  return component;
+}
+
+function WindowFrameComponent({ windowState }: { windowState: WindowState }) {
   const { closeWindow, focusWindow, minimizeWindow, updateWindow } = useOS();
   const app = getApp(windowState.appId)!;
-  const AppComponent = useMemo(() => lazy(app.loader), [app]);
+  const AppComponent = getAppComponent(app);
   const [snapPreview, setSnapPreview] = useState<SnapState>("none");
   const livePosition = useRef(windowState.position);
   const liveSize = useRef(windowState.size);
 
-  const normalBounds = () => ({
+  const normalBounds = useCallback(() => ({
     position: windowState.restoreBounds?.position ?? windowState.position,
     size: windowState.restoreBounds?.size ?? windowState.size,
-  });
+  }), [windowState.position, windowState.restoreBounds?.position, windowState.restoreBounds?.size, windowState.size]);
 
-  const restoreWindowBounds = () => {
+  const restoreWindowBounds = useCallback(() => {
     updateWindow(windowState.id, {
       position: windowState.restoreBounds?.position ?? { x: 92, y: 86 },
       size: windowState.restoreBounds?.size ?? app.defaultSize,
@@ -29,9 +48,9 @@ export function WindowFrame({ windowState }: { windowState: WindowState }) {
       snap: "none",
       maximized: false,
     });
-  };
+  }, [app.defaultSize, updateWindow, windowState.id, windowState.restoreBounds?.position, windowState.restoreBounds?.size]);
 
-  const applySnap = (target: SnapState) => {
+  const applySnap = useCallback((target: SnapState) => {
     if (target === "none") {
       restoreWindowBounds();
       return;
@@ -50,15 +69,15 @@ export function WindowFrame({ windowState }: { windowState: WindowState }) {
             ? { position: { x: 14, y: Math.round(height / 2) }, size: { width: width - 28, height: height / 2 - bottom }, restoreBounds: normalBounds(), snap: target, maximized: false }
             : { position: { x: 14, y: top }, size: { width: width - 28, height: usableHeight }, restoreBounds: normalBounds(), snap: "maximized" as SnapState, maximized: true };
     updateWindow(windowState.id, patch);
-  };
+  }, [normalBounds, restoreWindowBounds, updateWindow, windowState.id]);
 
-  const detectSnap = (event: PointerEvent): SnapState => {
+  const detectSnap = useCallback((event: PointerEvent): SnapState => {
     if (event.clientY < 44) return "maximized";
     if (event.clientX < 32) return "left";
     if (event.clientX > window.innerWidth - 32) return "right";
     if (event.clientY > window.innerHeight - 54) return "bottom";
     return "none";
-  };
+  }, []);
 
   const drag = usePointerDrag({
     onStart: () => {
@@ -200,3 +219,5 @@ export function WindowFrame({ windowState }: { windowState: WindowState }) {
     </>
   );
 }
+
+export const WindowFrame = memo(WindowFrameComponent);

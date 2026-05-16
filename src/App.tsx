@@ -1,11 +1,12 @@
 import { useEffect } from "react";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, MotionConfig } from "framer-motion";
 import { OSProvider, useOS } from "./state/OSProvider";
 import { AuthProvider } from "./state/AuthProvider";
 import { BootScreen } from "./components/shell/BootScreen";
 import { Desktop } from "./components/shell/Desktop";
 import { LockScreen } from "./components/shell/LockScreen";
 import { playStartupTone } from "./lib/sound";
+import { shouldReduceMotion } from "./lib/performance";
 
 function AstraRoot() {
   const { state, dispatch } = useOS();
@@ -27,18 +28,30 @@ function AstraRoot() {
         : state.settings.theme;
     document.documentElement.style.setProperty("--accent", hexToRgb(state.settings.accent));
     document.documentElement.style.setProperty("--accent-hex", state.settings.accent);
-  }, [state.settings.accent, state.settings.theme]);
+    document.documentElement.dataset.performance = state.settings.performanceMode;
+    document.documentElement.dataset.reduceMotion = shouldReduceMotion(
+      state.settings.performanceMode,
+      state.settings.reducedMotion,
+    )
+      ? "true"
+      : "false";
+  }, [state.settings.accent, state.settings.performanceMode, state.settings.reducedMotion, state.settings.theme]);
 
   return (
-    <AnimatePresence mode="wait">
-      {!state.booted ? (
-        <BootScreen key="boot" />
-      ) : state.locked ? (
-        <LockScreen key="lock" />
-      ) : (
-        <Desktop key="desktop" />
-      )}
-    </AnimatePresence>
+    <MotionConfig
+      reducedMotion={shouldReduceMotion(state.settings.performanceMode, state.settings.reducedMotion) ? "always" : "never"}
+      transition={{ duration: state.settings.performanceMode === "high" ? 0.3 : 0.2 }}
+    >
+      <AnimatePresence mode="wait">
+        {!state.booted ? (
+          <BootScreen key="boot" />
+        ) : state.locked ? (
+          <LockScreen key="lock" />
+        ) : (
+          <Desktop key="desktop" />
+        )}
+      </AnimatePresence>
+    </MotionConfig>
   );
 }
 

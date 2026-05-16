@@ -10,6 +10,7 @@ import { AmbientBackground } from "./AmbientBackground";
 import { AppLauncher } from "./AppLauncher";
 import { CommandPalette } from "./CommandPalette";
 import { ContextMenu } from "./ContextMenu";
+import { CursorGlow } from "./CursorGlow";
 import { FloatingWidgets } from "../widgets/FloatingWidgets";
 import { NotificationCenter } from "./NotificationCenter";
 import { Taskbar } from "./Taskbar";
@@ -45,7 +46,6 @@ export function Desktop() {
   const [commandOpen, setCommandOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [contextPoint, setContextPoint] = useState<Point | null>(null);
-  const [cursor, setCursor] = useState({ x: -100, y: -100 });
 
   const closeOverlays = useCallback(() => {
     setLauncherOpen(false);
@@ -78,7 +78,6 @@ export function Desktop() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      onPointerMove={(event) => setCursor({ x: event.clientX, y: event.clientY })}
       onContextMenu={(event) => {
         event.preventDefault();
         setContextPoint({ x: Math.min(event.clientX, window.innerWidth - 240), y: Math.min(event.clientY, window.innerHeight - 230) });
@@ -86,7 +85,7 @@ export function Desktop() {
       onPointerDown={() => setContextPoint(null)}
     >
       <AmbientBackground />
-      {state.settings.cursorEffects ? <div className="cursor-glow" style={{ left: cursor.x, top: cursor.y }} /> : null}
+      {state.settings.cursorEffects ? <CursorGlow /> : null}
       <div className="relative z-10 flex h-screen flex-col">
         <header className="pointer-events-none fixed inset-x-0 top-0 z-30 flex items-center justify-between px-5 py-4">
           <div className="pointer-events-auto flex items-center gap-3 rounded-full border border-white/12 bg-black/18 px-4 py-2 text-sm text-white/72 backdrop-blur-2xl">

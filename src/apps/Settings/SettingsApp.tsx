@@ -3,8 +3,9 @@ import { GlassButton } from "../../components/ui/GlassButton";
 import { Panel } from "../../components/ui/Panel";
 import { SystemIcon } from "../../components/ui/SystemIcon";
 import { accentColors, wallpapers } from "../../data/wallpapers";
+import { performanceProfiles } from "../../lib/performance";
 import { useOS } from "../../state/OSProvider";
-import type { AppComponentProps, AnimatedTheme, OSSettings, Wallpaper } from "../../types/os";
+import type { AppComponentProps, AnimatedTheme, OSSettings, PerformanceMode, Wallpaper } from "../../types/os";
 
 export default function SettingsApp(_: AppComponentProps) {
   const { state, setSettings, notify } = useOS();
@@ -108,6 +109,29 @@ export default function SettingsApp(_: AppComponentProps) {
                   className={`h-10 w-10 rounded-2xl border transition hover:scale-105 ${state.settings.accent === color ? "border-white shadow-glow" : "border-white/18"}`}
                   style={{ background: color }}
                 />
+              ))}
+            </div>
+          </div>
+          <div className="mt-6">
+            <p className="mb-2 text-sm text-white/62">Performance</p>
+            <div className="grid gap-2">
+              {(["high", "balanced", "battery"] as PerformanceMode[]).map((mode) => (
+                <button
+                  type="button"
+                  key={mode}
+                  onClick={() => setSettings({ performanceMode: mode })}
+                  className={`rounded-[22px] border p-3 text-left transition ${
+                    state.settings.performanceMode === mode
+                      ? "border-[rgba(var(--accent),.48)] bg-[rgba(var(--accent),.16)] shadow-glow"
+                      : "border-white/10 bg-white/[0.055] hover:bg-white/10"
+                  }`}
+                >
+                  <span className="flex items-center justify-between gap-3">
+                    <span className="text-sm font-semibold text-white">{performanceProfiles[mode].label}</span>
+                    {state.settings.performanceMode === mode ? <SystemIcon name="Check" size={16} /> : null}
+                  </span>
+                  <span className="mt-1 block text-xs leading-5 text-white/46">{performanceProfiles[mode].description}</span>
+                </button>
               ))}
             </div>
           </div>

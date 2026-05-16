@@ -1,13 +1,22 @@
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
+import { usePageVisibility } from "../../hooks/usePageVisibility";
+import { performanceProfiles } from "../../lib/performance";
+import { useOS } from "../../state/OSProvider";
 import { Panel } from "../ui/Panel";
 import { SystemIcon } from "../ui/SystemIcon";
 
-export function SystemMonitor() {
+function SystemMonitorComponent() {
+  const { state } = useOS();
+  const visible = usePageVisibility();
+  const profile = performanceProfiles[state.settings.performanceMode];
   const [tick, setTick] = useState(0);
   useEffect(() => {
-    const timer = window.setInterval(() => setTick((value) => value + 1), 1600);
+    const timer = window.setInterval(
+      () => setTick((value) => value + 1),
+      visible ? profile.widgetInterval : profile.hiddenWidgetInterval,
+    );
     return () => window.clearInterval(timer);
-  }, []);
+  }, [profile.hiddenWidgetInterval, profile.widgetInterval, visible]);
   const cpu = 28 + Math.round(Math.sin(tick / 2) * 14 + (tick % 5) * 3);
   const ram = 54 + Math.round(Math.cos(tick / 3) * 8);
 
@@ -23,6 +32,8 @@ export function SystemMonitor() {
     </Panel>
   );
 }
+
+export const SystemMonitor = memo(SystemMonitorComponent);
 
 function Metric({ label, value, icon }: { label: string; value: number; icon: string }) {
   return (

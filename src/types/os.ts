@@ -19,6 +19,7 @@ export type AppId =
 
 export type ThemeMode = "dark" | "light" | "system";
 export type AnimatedTheme = "aurora" | "eclipse" | "daybreak" | "orbital";
+export type PerformanceMode = "high" | "balanced" | "battery";
 export type SnapState = "none" | "left" | "right" | "top" | "bottom" | "maximized";
 export type FileNodeType = "folder" | "file";
 
@@ -76,6 +77,7 @@ export interface OSSettings {
   startupSound: boolean;
   cursorEffects: boolean;
   reducedMotion: boolean;
+  performanceMode: PerformanceMode;
   multiMonitor: boolean;
   widgets: {
     weather: boolean;
