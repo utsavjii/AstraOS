@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { AnimatePresence } from "framer-motion";
 import { OSProvider, useOS } from "./state/OSProvider";
+import { AuthProvider } from "./state/AuthProvider";
 import { BootScreen } from "./components/shell/BootScreen";
 import { Desktop } from "./components/shell/Desktop";
 import { LockScreen } from "./components/shell/LockScreen";
@@ -51,8 +52,10 @@ function hexToRgb(hex: string) {
 
 export default function App() {
   return (
-    <OSProvider>
-      <AstraRoot />
-    </OSProvider>
+    <AuthProvider>
+      <OSProvider>
+        <AstraRoot />
+      </OSProvider>
+    </AuthProvider>
   );
 }

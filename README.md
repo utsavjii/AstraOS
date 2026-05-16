@@ -20,6 +20,23 @@ npm run dev
 
 Open the local Vite URL shown in the terminal.
 
+## Firebase Authentication
+
+The app uses Firebase v9+ modular SDK for email/password auth, Google sign-in, persisted sessions, and Firestore profile documents.
+
+Create a `.env` file from `.env.example` and fill in the web app values for the existing Firebase project `astra-os-5e622`:
+
+```bash
+cp .env.example .env
+```
+
+Enable these providers in Firebase Authentication:
+
+- Email/Password
+- Google
+
+Registration writes a profile document to `users/{uid}` with `uid`, `displayName`, `email`, and `createdAt`.
+
 ## Production
 
 ```bash

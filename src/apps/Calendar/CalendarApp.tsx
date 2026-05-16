@@ -7,7 +7,7 @@ import type { AppComponentProps } from "../../types/os";
 
 export default function CalendarApp(_: AppComponentProps) {
   const { state, addEvent, deleteEvent } = useOS();
-  const today = new Date();
+  const today = useMemo(() => new Date(), []);
   const [title, setTitle] = useState("");
   const days = useMemo(() => Array.from({ length: 35 }, (_, index) => new Date(today.getFullYear(), today.getMonth(), index - today.getDay() + 1)), [today]);
 

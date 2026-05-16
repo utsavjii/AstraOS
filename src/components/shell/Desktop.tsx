@@ -2,6 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { appDefinitions } from "../../data/apps";
 import { useKeyboardShortcuts } from "../../hooks/useKeyboardShortcuts";
+import { useAuth } from "../../state/AuthProvider";
 import { useOS } from "../../state/OSProvider";
 import type { Point } from "../../types/os";
 import { SystemIcon } from "../ui/SystemIcon";
@@ -39,6 +40,7 @@ const workspaceProfiles = [
 
 export function Desktop() {
   const { state, dispatch, openApp, setWorkspace, addNote } = useOS();
+  const { user, logout } = useAuth();
   const [launcherOpen, setLauncherOpen] = useState(false);
   const [commandOpen, setCommandOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -91,13 +93,28 @@ export function Desktop() {
             <SystemIcon name="Sparkles" size={16} className="text-[rgb(var(--accent))]" />
             AstraOS
           </div>
-          <button
-            type="button"
-            onClick={() => dispatch({ type: "LOCK" })}
-            className="pointer-events-auto hidden rounded-full border border-white/12 bg-black/18 px-4 py-2 text-sm text-white/66 backdrop-blur-2xl transition hover:bg-white/12 hover:text-white sm:block"
-          >
-            Lock
-          </button>
+          <div className="pointer-events-auto hidden items-center gap-2 rounded-full border border-white/12 bg-black/18 p-1 pl-4 text-sm text-white/66 backdrop-blur-2xl sm:flex">
+            <span className="max-w-[260px] truncate">{user?.email ?? "Guest session"}</span>
+            <button
+              type="button"
+              onClick={() => dispatch({ type: "LOCK" })}
+              className="rounded-full px-3 py-1.5 transition hover:bg-white/12 hover:text-white"
+            >
+              Lock
+            </button>
+            {user ? (
+              <button
+                type="button"
+                onClick={async () => {
+                  await logout();
+                  dispatch({ type: "LOCK" });
+                }}
+                className="rounded-full px-3 py-1.5 transition hover:bg-rose-500/70 hover:text-white"
+              >
+                Logout
+              </button>
+            ) : null}
+          </div>
         </header>
         <section className="relative h-full px-5 pb-28 pt-20">
           <motion.div
